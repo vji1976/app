@@ -1,0 +1,6 @@
+Babel==2.7.0
+lxml==4.4.2
+Pillow==6.2.1
+python-docx==0.8.10
+pytz==2019.3
+tkcalendar==1.5.1
