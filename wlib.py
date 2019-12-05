@@ -17,6 +17,7 @@ import webbrowser
 from PIL import Image, ImageTk
 from tkcalendar import DateEntry
 from docx import Document
+# CUSTOM IMPORTS
 
 # HEX COLORS #
 # ---------- #
@@ -48,7 +49,14 @@ class wStyle(ttk.Style):
 		super().__init__()
 		self.configure('.',
 						foreground='#636e72',
-						font=BaseFont)		
+						font=BaseFont)
+		self.configure('wLabel.TLabel',
+						foreground='#21458C',
+						font=BoldFont)
+		self.configure('webLink.TLabel',
+						foreground='#9c88ff')
+		self.configure('webLinkHover.TLabel',
+						foreground='#6D9A64')
 		self.configure('statusbar.TLabel',
 					    borderwidth=2,
 					    relief='groove')		
@@ -100,10 +108,10 @@ def getVals(datadict):
 		
 def drawEntry(parent, label, var=None, width=20):
 	wfr = ttk.Frame(parent)
-	lbl = ttk.Label(wfr, text=label, anchor=tk.W)
+	lbl = ttk.Label(wfr, text=label, anchor=tk.W, style='wLabel.TLabel')
 	ent = ttk.Entry(wfr, width=width, textvariable=var)
 	lbl.pack(side=tk.LEFT)
-	ent.pack()
+	ent.pack(side=tk.RIGHT, fill=tk.X, expand=tk.TRUE, padx=8)
 	return wfr
 		
 def drawEntries(parent, dataDict):
@@ -117,8 +125,28 @@ def drawEntries(parent, dataDict):
 		True	 boolean just a one off to return something
 	"""
 	for k, v in dataDict.items():
-		drawEntry(parent, label=k, var=v).pack()
+		drawEntry(parent, label=k, var=v).pack(side=tk.TOP, fill=tk.X, pady=4)
 	return True
+	
+def drawDpiEntries(parent, dataDict):
+	msradlbls = ['Single', 'Married', 'Divorced', 'Widowed', 'Widower', 'Other']
+	rx = 0	# row ctr
+	for k, v in dataDict.items():
+		if k == 'Date of Birth' or k == 'Date of Death':
+			dfr = drawDate(parent, label=k, var=v, orient='hz')
+			dfr.grid(row=rx, column=0, sticky='nw', padx=4, pady=4)
+		elif k == 'Marital Status':
+			rfr = ttk.Frame(parent)
+			msrlbl = ttk.Label(rfr, text=k, style='wLabel.TLabel')
+			msrlbl.grid(row=0, column=0, sticky='nw')
+			msradsfra = drawRadios(rfr, labels=msradlbls, var=v)
+			msradsfra.grid(row=1, column=0, sticky='nw')
+			rfr.grid(row=rx, column=0, stick='nw', padx=4, pady=4)
+		else:
+			efr = drawEntry(parent, label=k, var=v)
+			efr.grid(row=rx, column=0, sticky='new', padx=4, pady=4)
+		rx += 1
+	return True			
 	
 def drawRadios(parent, **kw):
 	radfra = ttk.Frame(parent)
@@ -138,7 +166,7 @@ def drawRadios(parent, **kw):
 	
 def drawCombo(parent, width=20, **kw):
 	cbofra = ttk.Frame(parent)
-	cbolbl = ttk.Label(cbofra, text=kw['label'])
+	cbolbl = ttk.Label(cbofra, text=kw['label'], style='wLabel.TLabel')
 	cbo = ttk.Combobox(cbofra, width=width, values=kw['vals'], 
 					   textvariable=kw['var'])
 	cbo.current(0)	# sets first item in dropdown
@@ -148,16 +176,29 @@ def drawCombo(parent, width=20, **kw):
 	return cbofra
 	
 def drawDate(parent, width=10, **kw):
+	rx = 0	# these are used to orient label
+	cy = 1	# either above or next to entry
 	year = datetime.datetime.now().year
 	datefra = ttk.Frame(parent)
-	datelbl = ttk.Label(datefra, text=kw['label'])
+	datelbl = ttk.Label(datefra, text=kw['label'], style='wLabel.TLabel')
 	de = DateEntry(datefra, width=width, year=year, 
 				   foreground='white', background='darkblue',
 				   borderwidth=2, textvariable=kw['var'],
 				   cursor='hand1')
+	if kw['orient'] == 'vt':	# vertical
+		rx = 1
+		cy = 0
 	datelbl.grid(row=0, column=0, sticky='nw')
-	de.grid(row=1, column=0)
+	de.grid(row=rx, column=cy)
 	return datefra
+	
+def drawLinkLabel(parent, label, url):
+	lbl = ttk.Label(parent, text=label, cursor='hand2',
+				    style='weblink.TLabel')
+	lbl.bind('<Enter>', lambda e: lbl.configure(style='webLinkHover.TLabel'))
+	lbl.bind('<Leave>', lambda e: lbl.configure(style='webLink.TLabel'))
+	lbl.bind('<Button-1>', lambda e: webgo(url))
+	return lbl
 	
 def drawImgLabel(parent, imgpath, size=(128,128)):
 	raw = Image.open(imgpath)

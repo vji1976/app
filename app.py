@@ -105,11 +105,11 @@ class App(tk.Tk):
 		
 		# - Funeral Information Frame
 		funInfoFrame = wlib.wLabelFrame(lcol, text="Service Information")
-		funInfoFrame.grid(row=0, column=0, sticky='new')		
+		funInfoFrame.grid(row=0, column=0, sticky='new')
 		## funeral number
 		funNumFrame = ttk.Frame(funInfoFrame)
 		funNumFrame.grid(row=0, column=0, sticky='nw', padx=4, pady=6)
-		funNumLabel = ttk.Label(funNumFrame, text="Service Number")
+		funNumLabel = ttk.Label(funNumFrame, text="Service Number", style='wLabel.TLabel')
 		funNumLabel.grid(row=0, column=0)
 		funNumEnt = ttk.Entry(funNumFrame, width=8)
 		funNumEnt["textvariable"] = self.serviceDict["Service Number"]
@@ -117,7 +117,7 @@ class App(tk.Tk):
 		## service type
 		serviceTypeFrame = ttk.Frame(funInfoFrame)
 		serviceTypeFrame.grid(row=1, column=0, sticky='nw', padx=4, pady=6)
-		serviceTypeLbl = ttk.Label(serviceTypeFrame, text="Select Service Type")
+		serviceTypeLbl = ttk.Label(serviceTypeFrame, text="Select Service Type", style='wLabel.TLabel')
 		serviceTypeLbl.grid(row=0, column=0, sticky='nw')		
 		strad_frame = wlib.drawRadios(serviceTypeFrame,
 									  labels=data.fun_types,
@@ -131,14 +131,15 @@ class App(tk.Tk):
 		cbofra.grid(row=0, column=0, sticky='nw')		
 		fconFrame = ttk.Frame(fhomeFrame)
 		fconFrame.grid(row=0, column=1, sticky='nw', padx=10)
-		fconLabel = ttk.Label(fconFrame, text="F. H. Contact").grid(row=0, column=0, sticky='nw')
+		fconLabel = ttk.Label(fconFrame, text="F. H. Contact", style='wLabel.TLabel')
+		fconLabel.grid(row=0, column=0, sticky='nw')
 		self.fcontactEntry = ttk.Entry(fconFrame, width=28, 
 									   textvariable=self.serviceDict["F. H. Contact"])
 		self.fcontactEntry.grid(row=1, column=0, sticky='nw')
 		
 		fhomeNumFrame = ttk.Frame(fhomeFrame)
 		fhomeNumFrame.grid(row=1, column=1, sticky='ne', padx=10)
-		fhomeNumLabel = ttk.Label(fhomeNumFrame, text="Contact Phone #")
+		fhomeNumLabel = ttk.Label(fhomeNumFrame, text="Contact Phone #", style='wLabel.TLabel')
 		fhomeNumLabel.grid(row=0, column=0)
 		self.fconNumEntry = ttk.Entry(fhomeNumFrame, width=16,
 									  textvariable=self.serviceDict["Contact Phone"])
@@ -146,7 +147,7 @@ class App(tk.Tk):
 		## date - time - place combo boxes
 		dtpFrame = ttk.Frame(funInfoFrame)
 		dtpFrame.grid(row=3, column=0, sticky='nw', padx=4, pady=6)
-		wlib.drawDate(dtpFrame, label='Date', width=8,
+		wlib.drawDate(dtpFrame, label='Date', width=8, orient='vt',
 					  var=self.serviceDict["Service Date"]).grid(row=0, column=0)
 		wlib.drawCombo(dtpFrame, width=6, label='Time', vals=data.times, 
 					   var=self.serviceDict["Service Time"]).grid(row=0, column=1, padx=6)
@@ -164,33 +165,36 @@ class App(tk.Tk):
 		## organist - cantor -servers
 		ocsFrame = ttk.Frame(funInfoFrame)
 		ocsFrame.grid(row=5, column=0, sticky='nw', padx=4, pady=6)
-		organistLbl = ttk.Label(ocsFrame, text="Organist")
+		organistLbl = ttk.Label(ocsFrame, text="Organist", style='wLabel.TLabel')
 		organistLbl.grid(row=0, column=0, sticky='nw')
 		self.organistEnt = ttk.Entry(ocsFrame, width=24,
 						   textvariable=self.serviceDict["Organist"]).grid(row=1, column=0, sticky='nw')
-		cantorLbl = ttk.Label(ocsFrame, text="Cantor")
+		cantorLbl = ttk.Label(ocsFrame, text="Cantor", style='wLabel.TLabel')
 		cantorLbl.grid(row=0, column=1, sticky='nw', padx=4)
 		self.cantorEnt = ttk.Entry(ocsFrame, width=24,
 						 textvariable=self.serviceDict["Cantor"]).grid(row=1, column=1, padx=4)								   
 		srvFrame = ttk.Frame(funInfoFrame)
-		srvFrame.grid(row=6, column=0, sticky='nw', padx=4, pady=6)
+		srvFrame.grid(row=6, column=0, sticky='nsew', padx=4, pady=6)
 		srvNameFrame = ttk.Frame(srvFrame)
 		srvNameFrame.grid(row=0, column=0)
+		
 		lblctr = 0		# need to seed labels at 0
 		entctr = 1		# seed entries at 1 and add 2 to both to
 						# maintain column seperation and correct row numbers
 		for i in range(3):
 			keystr = "Server " + str(i+1)
-			lbl = ttk.Label(srvNameFrame, text=keystr).grid(row=lblctr, column=0, sticky='nw')
+			lbl = ttk.Label(srvNameFrame, text=keystr, style='wLabel.TLabel')
+			lbl.grid(row=lblctr, column=0, sticky='nw')
 			lblctr += 2
 			self.serverEnt = ttk.Entry(srvNameFrame, width=24,
 									   textvariable=self.serviceDict[keystr])
 			self.serverEnt.grid(row=entctr, column=0, sticky='nw')
-			entctr += 2			
+			entctr += 2
+				
 		srvImgFrame = ttk.Frame(srvFrame)
-		srvImgFrame.grid(row=0, column=1, sticky='nsew')
+		srvImgFrame.grid(row=0, column=1, sticky='news')
 		srvImgLabel = wlib.drawImgLabel(srvImgFrame, 'img/servers.png')
-		srvImgLabel.grid(row=0, column=0, sticky='nsew', pady=4)			
+		srvImgLabel.grid(row=0, column=0, sticky='nswe', pady=4)			
 		
 		''' MIDDLE COLUMN START '''
 		''' ------------------- '''
@@ -201,14 +205,23 @@ class App(tk.Tk):
 		# - Deceased Personal Info Frame
 		dpiFrame = wlib.wLabelFrame(mcol, text="Deceased Personal Info")
 		dpiFrame.grid(row=0, column=0, sticky='new')
-		wlib.drawEntries(dpiFrame, self.dpiDict)		
+		dpiFrame.columnconfigure(0, weight=1)
+		wlib.drawDpiEntries(dpiFrame, self.dpiDict)		
 				
 		''' RIGHT COLUMN START '''
 		''' ------------------ '''
 		rcol = ttk.Frame(self, width=300, style='column.TFrame')
 		rcol.grid(row=1, column=2, sticky='nsew', padx=10, pady=10)
 		rcol.grid_propagate(0)				# prevent column from resizing to inner widget size
-		rcol.columnconfigure(0, weight=1)	# allows child widgets to fill space of column		
+		rcol.columnconfigure(0, weight=1)	# allows child widgets to fill space of column
+		# resources frame
+		resFrame = wlib.wLabelFrame(rcol, text="Resources")
+		resFrame.grid(row=0, column=0, sticky='new')
+		fhweblinkFrame = ttk.Frame(resFrame)
+		for link in data.fhome_links:
+			weblbl = wlib.drawLinkLabel(fhweblinkFrame, label=link[0], url=link[1])
+			weblbl.pack()
+		fhweblinkFrame.grid(row=0, column=0, sticky='nw')	
 		
 		''' STATUS BAR ROW START '''
 		''' -------------------- '''

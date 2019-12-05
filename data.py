@@ -27,7 +27,13 @@ dpi_Labels = ['Name',
 			  'City of Death',
 			  'Marital Status',
 			  'Spouse',
-			  'Maiden Name (if applicable)']
+			  'Maiden Name']
+			  
+dpi_MarStatus_Labels = ['Single',
+						'Married',
+						'Widowed',
+						'Divorced',
+						'Other']
 				   
 nok_Labels = ['Next of Kin',
 			  'Relationship',
