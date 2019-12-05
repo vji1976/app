@@ -45,9 +45,15 @@ class App(tk.Tk):
 		self.drawgui()
 		
 	def initvars(self):
+		self.dataDicts = []	# this main list will hold all
+							# data dictionaries for access later
 		# main data dictionary population
 		self.serviceDict = self.makeDataDict(data.srv_Labels)
+		self.dpiDict = self.makeDataDict(data.dpi_Labels)
 		self.serviceDict["Service Type"].set("Full Funeral")
+		# add data dicts
+		self.dataDicts.append(self.serviceDict)
+		self.dataDicts.append(self.dpiDict)
 		# status bar text variable for messages
 		self.statusTxt = tk.StringVar()
 		self.statusTxt.set("Program Running")
@@ -58,13 +64,13 @@ class App(tk.Tk):
 		# url paths
 		self.fb_url = data.social_paths["fb"]
 		self.tw_url = data.social_paths["tw"]
-		self.pa_url = data.social_paths["mp"]
+		self.pa_url = data.social_paths["mp"]		
 		
 	def drawmenu(self):
 		self.menubar = wlib.wMenu(self)
 		# file menu commands
 		self.menubar.fm.add_command(label="Create Document",
-									command=lambda: self.createWordDoc(self.serviceDict))
+									command=lambda: self.createWordDoc(self.dataDicts))
 		self.menubar.fm.add_separator()
 		self.bind_all('<Control-q>', lambda e: sys.exit())
 		self.menubar.fm.add_command(label="Quit", underline=0,
@@ -99,8 +105,7 @@ class App(tk.Tk):
 		
 		# - Funeral Information Frame
 		funInfoFrame = wlib.wLabelFrame(lcol, text="Service Information")
-		funInfoFrame.grid(row=0, column=0, sticky='new')
-		
+		funInfoFrame.grid(row=0, column=0, sticky='new')		
 		## funeral number
 		funNumFrame = ttk.Frame(funInfoFrame)
 		funNumFrame.grid(row=0, column=0, sticky='nw', padx=4, pady=6)
@@ -108,28 +113,22 @@ class App(tk.Tk):
 		funNumLabel.grid(row=0, column=0)
 		funNumEnt = ttk.Entry(funNumFrame, width=8)
 		funNumEnt["textvariable"] = self.serviceDict["Service Number"]
-		funNumEnt.grid(row=0, column=1)
-		
+		funNumEnt.grid(row=0, column=1)		
 		## service type
 		serviceTypeFrame = ttk.Frame(funInfoFrame)
 		serviceTypeFrame.grid(row=1, column=0, sticky='nw', padx=4, pady=6)
 		serviceTypeLbl = ttk.Label(serviceTypeFrame, text="Select Service Type")
-		serviceTypeLbl.grid(row=0, column=0, sticky='nw')
-		
+		serviceTypeLbl.grid(row=0, column=0, sticky='nw')		
 		strad_frame = wlib.drawRadios(serviceTypeFrame,
 									  labels=data.fun_types,
-						              var=self.serviceDict["Service Type"])
-		
-		strad_frame.grid(row=1, column=0, sticky='nw')
-		
+						              var=self.serviceDict["Service Type"])		
+		strad_frame.grid(row=1, column=0, sticky='nw')		
 		## funeral home info combo and entries
 		fhomeFrame = ttk.Frame(funInfoFrame)
-		fhomeFrame.grid(row=2, column=0, sticky='nw', padx=4, pady=6)
-		
+		fhomeFrame.grid(row=2, column=0, sticky='nw', padx=4, pady=6)		
 		cbofra = wlib.drawCombo(fhomeFrame, width=10, label="Funeral Home", vals=data.fun_homes,
 								var=self.serviceDict["Funeral Home"])
-		cbofra.grid(row=0, column=0, sticky='nw')
-		
+		cbofra.grid(row=0, column=0, sticky='nw')		
 		fconFrame = ttk.Frame(fhomeFrame)
 		fconFrame.grid(row=0, column=1, sticky='nw', padx=10)
 		fconLabel = ttk.Label(fconFrame, text="F. H. Contact").grid(row=0, column=0, sticky='nw')
@@ -144,7 +143,6 @@ class App(tk.Tk):
 		self.fconNumEntry = ttk.Entry(fhomeNumFrame, width=16,
 									  textvariable=self.serviceDict["Contact Phone"])
 		self.fconNumEntry.grid(row=1, column=0)		
-		
 		## date - time - place combo boxes
 		dtpFrame = ttk.Frame(funInfoFrame)
 		dtpFrame.grid(row=3, column=0, sticky='nw', padx=4, pady=6)
@@ -153,8 +151,7 @@ class App(tk.Tk):
 		wlib.drawCombo(dtpFrame, width=6, label='Time', vals=data.times, 
 					   var=self.serviceDict["Service Time"]).grid(row=0, column=1, padx=6)
 		wlib.drawCombo(dtpFrame, width=18, label='Location', vals=data.fun_places,
-					   var=self.serviceDict["Service Location"]).grid(row=0, column=2)
-					   
+					   var=self.serviceDict["Service Location"]).grid(row=0, column=2)					   
 		## day - celebrant combo boxes
 		dcFrame = ttk.Frame(funInfoFrame)
 		dcFrame.grid(row=4, column=0, sticky='nw', padx=4, pady=6)
@@ -163,8 +160,7 @@ class App(tk.Tk):
 					   vals=data.days).grid(row=0, column=0)
 		wlib.drawCombo(dcFrame, width=16, label="Celebrant",
 					   var=self.serviceDict["Celebrant"], 
-					   vals=data.fun_celebrants).grid(row=0, column=1, padx=4)
-					   
+					   vals=data.fun_celebrants).grid(row=0, column=1, padx=4)					   
 		## organist - cantor -servers
 		ocsFrame = ttk.Frame(funInfoFrame)
 		ocsFrame.grid(row=5, column=0, sticky='nw', padx=4, pady=6)
@@ -175,8 +171,7 @@ class App(tk.Tk):
 		cantorLbl = ttk.Label(ocsFrame, text="Cantor")
 		cantorLbl.grid(row=0, column=1, sticky='nw', padx=4)
 		self.cantorEnt = ttk.Entry(ocsFrame, width=24,
-						 textvariable=self.serviceDict["Cantor"]).grid(row=1, column=1, padx=4)
-								   
+						 textvariable=self.serviceDict["Cantor"]).grid(row=1, column=1, padx=4)								   
 		srvFrame = ttk.Frame(funInfoFrame)
 		srvFrame.grid(row=6, column=0, sticky='nw', padx=4, pady=6)
 		srvNameFrame = ttk.Frame(srvFrame)
@@ -191,8 +186,7 @@ class App(tk.Tk):
 			self.serverEnt = ttk.Entry(srvNameFrame, width=24,
 									   textvariable=self.serviceDict[keystr])
 			self.serverEnt.grid(row=entctr, column=0, sticky='nw')
-			entctr += 2
-			
+			entctr += 2			
 		srvImgFrame = ttk.Frame(srvFrame)
 		srvImgFrame.grid(row=0, column=1, sticky='nsew')
 		srvImgLabel = wlib.drawImgLabel(srvImgFrame, 'img/servers.png')
@@ -207,8 +201,7 @@ class App(tk.Tk):
 		# - Deceased Personal Info Frame
 		dpiFrame = wlib.wLabelFrame(mcol, text="Deceased Personal Info")
 		dpiFrame.grid(row=0, column=0, sticky='new')
-		dpiDict = wlib.makeInfoDict(data.dpi_Labels, tk.StringVar())
-		wlib.drawEntries(dpiFrame, dpiDict)
+		wlib.drawEntries(dpiFrame, self.dpiDict)		
 				
 		''' RIGHT COLUMN START '''
 		''' ------------------ '''
@@ -230,9 +223,10 @@ class App(tk.Tk):
 		dataDict = {k : tk.StringVar() for k in labels}
 		return dataDict
 		
-	def createWordDoc(self, datadict):
-		for k, v in datadict.items():
-			print("{} : {}".format(k, v.get()))
+	def createWordDoc(self, datadicts):
+		for datadict in datadicts:
+			for k, v in datadict.items():
+				print("{} : {}".format(k, v.get()))
 		
 	def updateStatus(self, msg):
 		self.statusTxt.set(msg)
