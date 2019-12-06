@@ -48,13 +48,13 @@ class App(tk.Tk):
 		self.dataDicts = []	# this main list will hold all
 							# data dictionaries for access later
 		# main data dictionary population
-		self.serviceDict = self.makeDataDict(data.srv_Labels)
+		self.srvDict = self.makeDataDict(data.srv_Labels)
 		self.dpiDict = self.makeDataDict(data.dpi_Labels)
 		self.nokDict = self.makeDataDict(data.nok_Labels)
 		self.cemDict = self.makeDataDict(data.cem_Labels)
-		self.serviceDict["Service Type"].set("Full Funeral")
+		self.srvDict["Service Type"].set("Full Funeral")
 		# add data dicts
-		self.dataDicts.append(self.serviceDict)
+		self.dataDicts.append(self.srvDict)
 		self.dataDicts.append(self.dpiDict)
 		# status bar text variable for messages
 		self.statusTxt = tk.StringVar()
@@ -106,97 +106,10 @@ class App(tk.Tk):
 		lcol.columnconfigure(0, weight=1)	# allows child widgets to fill space of column
 		
 		# - Funeral Information Frame
-		funInfoFrame = wlib.wLabelFrame(lcol, text="Service Information")
-		funInfoFrame.grid(row=0, column=0, sticky='new')
-		## funeral number
-		funNumFrame = ttk.Frame(funInfoFrame)
-		funNumFrame.grid(row=0, column=0, sticky='nw', padx=4, pady=6)
-		funNumLabel = ttk.Label(funNumFrame, text="Service Number", style='wLabel.TLabel')
-		funNumLabel.grid(row=0, column=0)
-		funNumEnt = ttk.Entry(funNumFrame, width=8)
-		funNumEnt["textvariable"] = self.serviceDict["Service Number"]
-		funNumEnt.grid(row=0, column=1)		
-		## service type
-		serviceTypeFrame = ttk.Frame(funInfoFrame)
-		serviceTypeFrame.grid(row=1, column=0, sticky='nw', padx=4, pady=6)
-		serviceTypeLbl = ttk.Label(serviceTypeFrame, text="Select Service Type", style='wLabel.TLabel')
-		serviceTypeLbl.grid(row=0, column=0, sticky='nw')		
-		strad_frame = wlib.drawRadios(serviceTypeFrame,
-									  labels=data.srv_Types,
-						              var=self.serviceDict["Service Type"])		
-		strad_frame.grid(row=1, column=0, sticky='nw')		
-		## funeral home info combo and entries
-		fhomeFrame = ttk.Frame(funInfoFrame)
-		fhomeFrame.grid(row=2, column=0, sticky='nw', padx=4, pady=6)		
-		cbofra = wlib.drawCombo(fhomeFrame, width=10, label="Funeral Home", vals=data.fun_homes,
-								var=self.serviceDict["Funeral Home"])
-		cbofra.grid(row=0, column=0, sticky='nw')		
-		fconFrame = ttk.Frame(fhomeFrame)
-		fconFrame.grid(row=0, column=1, sticky='nw', padx=10)
-		fconLabel = ttk.Label(fconFrame, text="F. H. Contact", style='wLabel.TLabel')
-		fconLabel.grid(row=0, column=0, sticky='nw')
-		self.fcontactEntry = ttk.Entry(fconFrame, width=28, 
-									   textvariable=self.serviceDict["F. H. Contact"])
-		self.fcontactEntry.grid(row=1, column=0, sticky='nw')
-		
-		fhomeNumFrame = ttk.Frame(fhomeFrame)
-		fhomeNumFrame.grid(row=1, column=1, sticky='ne', padx=10)
-		fhomeNumLabel = ttk.Label(fhomeNumFrame, text="Contact Phone #", style='wLabel.TLabel')
-		fhomeNumLabel.grid(row=0, column=0)
-		self.fconNumEntry = ttk.Entry(fhomeNumFrame, width=16,
-									  textvariable=self.serviceDict["Contact Phone"])
-		self.fconNumEntry.grid(row=1, column=0)		
-		## date - time - place combo boxes
-		dtpFrame = ttk.Frame(funInfoFrame)
-		dtpFrame.grid(row=3, column=0, sticky='nw', padx=4, pady=6)
-		wlib.drawDate(dtpFrame, label='Date', width=9, orient='vt',
-					  var=self.serviceDict["Service Date"]).grid(row=0, column=0)
-		wlib.drawCombo(dtpFrame, width=7, label='Time', vals=data.times, 
-					   var=self.serviceDict["Service Time"]).grid(row=0, column=1, padx=6)
-		wlib.drawCombo(dtpFrame, width=18, label='Location', vals=data.fun_places,
-					   var=self.serviceDict["Service Location"]).grid(row=0, column=2)					   
-		## day - celebrant combo boxes
-		dcFrame = ttk.Frame(funInfoFrame)
-		dcFrame.grid(row=4, column=0, sticky='nw', padx=4, pady=6)
-		wlib.drawCombo(dcFrame, width=8, label="Day",
-					   var=self.serviceDict["Service Day"], 
-					   vals=data.days).grid(row=0, column=0)
-		wlib.drawCombo(dcFrame, width=16, label="Celebrant",
-					   var=self.serviceDict["Celebrant"], 
-					   vals=data.celebrants).grid(row=0, column=1, padx=4)					   
-		## organist - cantor -servers
-		ocsFrame = ttk.Frame(funInfoFrame)
-		ocsFrame.grid(row=5, column=0, sticky='nw', padx=4, pady=6)
-		organistLbl = ttk.Label(ocsFrame, text="Organist", style='wLabel.TLabel')
-		organistLbl.grid(row=0, column=0, sticky='nw')
-		self.organistEnt = ttk.Entry(ocsFrame, width=24,
-						   textvariable=self.serviceDict["Organist"]).grid(row=1, column=0, sticky='nw')
-		cantorLbl = ttk.Label(ocsFrame, text="Cantor", style='wLabel.TLabel')
-		cantorLbl.grid(row=0, column=1, sticky='nw', padx=4)
-		self.cantorEnt = ttk.Entry(ocsFrame, width=24,
-						 textvariable=self.serviceDict["Cantor"]).grid(row=1, column=1, padx=4)								   
-		srvFrame = ttk.Frame(funInfoFrame)
-		srvFrame.grid(row=6, column=0, sticky='nsew', padx=4, pady=6)
-		srvNameFrame = ttk.Frame(srvFrame)
-		srvNameFrame.grid(row=0, column=0)
-		
-		lblctr = 0		# need to seed labels at 0
-		entctr = 1		# seed entries at 1 and add 2 to both to
-						# maintain column seperation and correct row numbers
-		for i in range(3):
-			keystr = "Server " + str(i+1)
-			lbl = ttk.Label(srvNameFrame, text=keystr, style='wLabel.TLabel')
-			lbl.grid(row=lblctr, column=0, sticky='nw')
-			lblctr += 2
-			self.serverEnt = ttk.Entry(srvNameFrame, width=24,
-									   textvariable=self.serviceDict[keystr])
-			self.serverEnt.grid(row=entctr, column=0, sticky='nw')
-			entctr += 2
-				
-		srvImgFrame = ttk.Frame(srvFrame)
-		srvImgFrame.grid(row=0, column=1, sticky='news')
-		srvImgLabel = wlib.drawImgLabel(srvImgFrame, 'img/servers.png')
-		srvImgLabel.grid(row=0, column=0, sticky='nswe', pady=4)			
+		srvFrame = wlib.wLabelFrame(lcol, text="Service Information")
+		srvFrame.grid(row=0, column=0, sticky='new')
+		wlib.drawSrvEntries(srvFrame, self.srvDict)
+					
 		
 		''' MIDDLE COLUMN START '''
 		''' ------------------- '''

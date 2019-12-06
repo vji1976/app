@@ -17,6 +17,30 @@ srv_Labels = ['Service Number',
 			  'Server 1',
 			  'Server 2',
 			  'Server 3']
+			  
+srv_Types = ['Full Funeral',
+			 'Memorial Service',
+		     'Burial Only']
+
+fun_homes = ['Billman',
+			 'Czup',
+			 'Ducro',
+			 'Fleming',
+			 'Guerriero',
+			 'Potti',
+			 'Zaback']
+			 
+fun_places = ['Mother of Sorrows',
+			  'St. Joseph',
+			  'Mt. Carmel',
+			  'St. Joseph Cemetery',
+			  'Funeral Home',
+			  'Other']	# st. joseph cemetery
+			
+celebrants = ['Fr. Thomas', 
+			  'Fr. David', 
+			  'Fr. Mulqueen', 
+			  'Dec. Johnson']		   
 				  				  
 dpi_Labels = ['Name',
 			  'Age',
@@ -42,8 +66,10 @@ nok_Labels = ['Next of Kin',
 			  
 cem_Labels = ['Cemetery',
 			  'City',
-			  'Fee',				  
-			  'Military Rite'
+			  'Fee',
+			  'Burial Date',
+			  'Burial Time',
+			  'Burial Day',			  
 			  'Grave Location',
 			  'Previous Burials',
 			  'Vault Type',
@@ -76,32 +102,7 @@ days = ['Sunday',
 		'Wednesday',
 		'Thursday',
 		'Friday',
-		'Saturday']		
-		   
-# STATIC FUNERAL DATA combox, radio
-fun_types = ['Full Funeral',
-			 'Memorial Service',
-			 'Burial Only']
-			 
-fun_homes = ['Billman',
-			 'Czup',
-			 'Ducro',
-			 'Fleming',
-			 'Guerriero',
-			 'Potti',
-			 'Zaback']
-			 
-fun_places = ['Mother of Sorrows',
-			  'St. Joseph',
-			  'Mt. Carmel',
-			  'St. Joseph Cemetery',
-			  'Funeral Home',
-			  'Other']	# st. joseph cemetery
-			
-fun_celebrants = ['Fr. Thomas', 
-				  'Fr. David', 
-				  'Fr. Mulqueen', 
-			      'Dec. Johnson']
+		'Saturday']
 			
 # WEB AND LOCAL PATH DICTS
 fhome_links = [('Guerriero Funeral Home', "https://www.guerrierofuneralhome.com/"),
