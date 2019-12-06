@@ -21,26 +21,26 @@ srv_Labels = ['Service Number',
 srv_Types = ['Full Funeral',
 			 'Memorial Service',
 		     'Burial Only']
-
-fun_homes = ['Billman',
-			 'Czup',
-			 'Ducro',
-			 'Fleming',
-			 'Guerriero',
-			 'Potti',
-			 'Zaback']
-			 
-fun_places = ['Mother of Sorrows',
+		     
+srv_Places = ['Mother of Sorrows',
 			  'St. Joseph',
 			  'Mt. Carmel',
 			  'St. Joseph Cemetery',
 			  'Funeral Home',
 			  'Other']	# st. joseph cemetery
-			
+			  
 celebrants = ['Fr. Thomas', 
 			  'Fr. David', 
 			  'Fr. Mulqueen', 
-			  'Dec. Johnson']		   
+			  'Dec. Johnson']	
+
+fun_Homes = ['Billman',
+			 'Czup',
+			 'Ducro',
+			 'Fleming',
+			 'Guerriero',
+			 'Potti',
+			 'Zaback']	   
 				  				  
 dpi_Labels = ['Name',
 			  'Age',

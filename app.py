@@ -128,7 +128,7 @@ class App(tk.Tk):
 		## funeral home info combo and entries
 		fhomeFrame = ttk.Frame(funInfoFrame)
 		fhomeFrame.grid(row=2, column=0, sticky='nw', padx=4, pady=6)		
-		cbofra = wlib.drawCombo(fhomeFrame, width=10, label="Funeral Home", vals=data.fun_homes,
+		cbofra = wlib.drawCombo(fhomeFrame, width=10, label="Funeral Home", vals=data.fun_Homes,
 								var=self.serviceDict["Funeral Home"])
 		cbofra.grid(row=0, column=0, sticky='nw')		
 		fconFrame = ttk.Frame(fhomeFrame)
@@ -153,7 +153,7 @@ class App(tk.Tk):
 					  var=self.serviceDict["Service Date"]).grid(row=0, column=0)
 		wlib.drawCombo(dtpFrame, width=7, label='Time', vals=data.times, 
 					   var=self.serviceDict["Service Time"]).grid(row=0, column=1, padx=6)
-		wlib.drawCombo(dtpFrame, width=18, label='Location', vals=data.fun_places,
+		wlib.drawCombo(dtpFrame, width=18, label='Location', vals=data.srv_Places,
 					   var=self.serviceDict["Service Location"]).grid(row=0, column=2)					   
 		## day - celebrant combo boxes
 		dcFrame = ttk.Frame(funInfoFrame)

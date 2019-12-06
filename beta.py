@@ -108,8 +108,74 @@ class App(tk.Tk):
 		# - Funeral Information Frame
 		srvFrame = wlib.wLabelFrame(lcol, text="Service Information")
 		srvFrame.grid(row=0, column=0, sticky='new')
-		wlib.drawSrvEntries(srvFrame, self.srvDict)
-					
+		# -- Service Number
+		srvNumFrame = wlib.drawDictEntry(srvFrame,
+										 width=6,
+										 keystr="Service Number",
+										 datadict=self.srvDict)
+		srvNumFrame.grid(row=0, column=0)
+		# -- Service Type
+		srvTypeFrame = wlib.drawRadFrame(srvFrame,
+										 wlabel='Service Type',
+										 rlabels=data.srv_Types,
+										 var=self.srvDict['Service Type'])
+		srvTypeFrame.grid(row=1, column=0)
+		# -- Service Date Time Location
+		srvDTLFrame = ttk.Frame(srvFrame)
+		sdFrame = wlib.drawDate(srvDTLFrame, 
+								label='Date',
+								var=self.srvDict['Service Date'])
+		sdFrame.grid(row=0, column=0)		
+		stFrame = wlib.drawCombo(srvDTLFrame,
+								 width=7,
+							     label='Time',
+							     var=self.srvDict['Service Time'],
+							     vals=data.times)
+		stFrame.grid(row=0, column=1)		
+		slFrame = wlib.drawCombo(srvDTLFrame,
+								 width=18,
+							     label='Location',
+							     var=self.srvDict['Service Location'],
+							     vals=data.srv_Places)
+		slFrame.grid(row=0, column=2)
+		srvDTLFrame.grid(row=2, column=0)
+		# -- Service Day Celebrant
+		srvDCFrame = ttk.Frame(srvFrame)
+		sdayFrame = wlib.drawCombo(srvDCFrame,
+								   width=9,
+								   label='Day',
+								   var=self.srvDict['Service Day'],
+								   vals=data.days)
+		sdayFrame.grid(row=0, column=0)
+		scFrame = wlib.drawCombo(srvDCFrame,
+								 width=14,
+								 label='Celebrant',
+								 var=self.srvDict['Celebrant'],
+								 vals=data.celebrants)
+		scFrame.grid(row=0, column=1)
+		srvDCFrame.grid(row=3, column=0)
+		# -- Funeral Home Contact Phone
+		fhcpFrame = ttk.Frame(srvFrame)
+		fhFrame = wlib.drawCombo(fhcpFrame,
+								 width=9,
+								 label='Funeral Home',
+								 var=self.srvDict['Funeral Home'],
+								 vals=data.fun_Homes)
+		fhFrame.grid(row=0, column=0)
+		fcFrame = wlib.drawEntry(fhcpFrame, label='Contact', var=self.srvDict['F. H. Contact'])
+		fcFrame.grid(row=0, column=1)
+		fhicoFrame = ttk.Frame(fhcpFrame)
+		fhraw = Image.open('img/fhome_icon.png')
+		fhraw.thumbnail((32,32))
+		fhimg = ImageTk.PhotoImage(fhraw)
+		fhimglbl = ttk.Label(fhicoFrame, image=fhimg)
+		fhimglbl.image = fhimg
+		fhimglbl.pack()
+		fhicoFrame.grid(row=1, column=0)
+		fpFrame = wlib.drawEntry(fhcpFrame, label="Phone", var=self.srvDict['Contact Phone'])
+		fpFrame.grid(row=1, column=1)
+		
+		fhcpFrame.grid(row=4, column=0)
 		
 		''' MIDDLE COLUMN START '''
 		''' ------------------- '''
@@ -138,7 +204,7 @@ class App(tk.Tk):
 		cemFrame.grid(row=0, column=0, sticky='new')
 		cemFrame.columnconfigure(0, weight=1)
 		wlib.drawCemEntries(cemFrame, self.cemDict)
-		# resources frame
+		# - Resources Frame
 		resFrame = wlib.wLabelFrame(rcol, text="Resources")
 		resFrame.grid(row=1, column=0, sticky='new')
 		fhweblinkFrame = ttk.Frame(resFrame)

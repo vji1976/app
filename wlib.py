@@ -122,7 +122,7 @@ def drawEntry(parent, label, var=None, width=20):
 	ent = wEntry(wfr, width=width, textvariable=var)
 	lbl.pack(side=tk.LEFT)
 	ent.pack(side=tk.RIGHT, fill=tk.X, expand=tk.TRUE, padx=8)
-	return wfr
+	return wfr	
 		
 def drawEntries(parent, dataDict):
 	"""Build and return a framed custom widget set of labeled entries.
@@ -138,6 +138,15 @@ def drawEntries(parent, dataDict):
 		drawEntry(parent, label=k, var=v).pack(side=tk.TOP, fill=tk.X, pady=4)
 	return True
 	
+def drawDictEntry(parent, width, keystr, datadict):
+	wfr = ttk.Frame(parent)
+	lbl = ttk.Label(wfr, text=keystr)
+	lbl.pack(side=tk.LEFT)
+	ent = ttk.Entry(wfr, width=width,
+				    textvariable=datadict[keystr])
+	ent.pack(side=tk.RIGHT, fill=tk.X, expand=tk.TRUE)
+	return wfr
+	
 def drawSrvEntries(parent, dataDict):
 	rx = 0
 	cbodict = {"Service Time" : data.times,
@@ -145,6 +154,7 @@ def drawSrvEntries(parent, dataDict):
 			   "Service Location" : data.fun_places,
 			   "Celebrant" : data.celebrants,
 			   "Funeral Home" : data.fun_homes}
+		
 	"""
 	srvImgFrame = ttk.Frame(srvFrame)
 	srvImgFrame.grid(row=0, column=1, sticky='news')
@@ -198,7 +208,7 @@ def drawCemEntries(parent, dataDict):
 		rx += 1
 	return True
 	
-def drawDate(parent, width=10, **kw):
+def drawDate(parent, width=8, **kw):
 	rx = 0	# these are used to orient label
 	cy = 1	# either above or next to entry
 	year = datetime.datetime.now().year
@@ -239,6 +249,19 @@ def drawRadios(parent, **kw):
 			rx += 1
 			cy = 0
 	return radfra
+	
+def drawRadFrame(parent, **kw):
+	wfr = ttk.Frame(parent)
+	wlbl = kw.get('wlabel', 'Radio Buttons')
+	lbls = kw['rlabels']
+	var = kw.get('var', None)
+		
+	lbl = ttk.Label(wfr, text=wlbl)
+	lbl.grid(row=0, column=0, columnspan=len(lbls))
+	radfra = drawRadios(wfr, labels=lbls, var=var)
+	radfra.grid(row=1, column=0)
+	return wfr
+	
 	
 def drawLinkLabel(parent, label, url):
 	lbl = ttk.Label(parent, text=label, cursor='hand2',
