@@ -63,6 +63,7 @@ class App(tk.Tk):
 		self.fb_img_path = 'img/fb_tool.png'
 		self.pa_img_path = 'img/mp_tool.png'
 		self.tw_img_path = 'img/tw_tool.png'
+		self.fhome_icon = 'img/fhome_icon.png'
 		# url paths
 		self.fb_url = data.social_paths["fb"]
 		self.tw_url = data.social_paths["tw"]
@@ -113,69 +114,114 @@ class App(tk.Tk):
 										 width=6,
 										 keystr="Service Number",
 										 datadict=self.srvDict)
-		srvNumFrame.grid(row=0, column=0)
+		srvNumFrame.grid(row=0, column=0, sticky='nw', padx=4, pady=4)
 		# -- Service Type
 		srvTypeFrame = wlib.drawRadFrame(srvFrame,
 										 wlabel='Service Type',
 										 rlabels=data.srv_Types,
 										 var=self.srvDict['Service Type'])
-		srvTypeFrame.grid(row=1, column=0)
+		srvTypeFrame.grid(row=1, column=0, sticky='nw', padx=4, pady=4)
+		
 		# -- Service Date Time Location
 		srvDTLFrame = ttk.Frame(srvFrame)
+		srvDTLFrame.grid(row=2, column=0, sticky='nw', padx=4, pady=4)
 		sdFrame = wlib.drawDate(srvDTLFrame, 
 								label='Date',
 								var=self.srvDict['Service Date'])
-		sdFrame.grid(row=0, column=0)		
+		sdFrame.grid(row=0, column=0, sticky='nw')		
 		stFrame = wlib.drawCombo(srvDTLFrame,
 								 width=7,
 							     label='Time',
 							     var=self.srvDict['Service Time'],
 							     vals=data.times)
-		stFrame.grid(row=0, column=1)		
+		stFrame.grid(row=0, column=1, sticky='nw', padx=8)		
 		slFrame = wlib.drawCombo(srvDTLFrame,
 								 width=18,
 							     label='Location',
 							     var=self.srvDict['Service Location'],
 							     vals=data.srv_Places)
-		slFrame.grid(row=0, column=2)
-		srvDTLFrame.grid(row=2, column=0)
+		slFrame.grid(row=0, column=2, sticky='nw')
+		
 		# -- Service Day Celebrant
 		srvDCFrame = ttk.Frame(srvFrame)
+		srvDCFrame.grid(row=3, column=0, sticky='nw', padx=4, pady=4)
 		sdayFrame = wlib.drawCombo(srvDCFrame,
-								   width=9,
+								   width=12,
 								   label='Day',
 								   var=self.srvDict['Service Day'],
 								   vals=data.days)
-		sdayFrame.grid(row=0, column=0)
+		sdayFrame.grid(row=0, column=0, sticky='nw')
 		scFrame = wlib.drawCombo(srvDCFrame,
-								 width=14,
+								 width=16,
 								 label='Celebrant',
 								 var=self.srvDict['Celebrant'],
 								 vals=data.celebrants)
-		scFrame.grid(row=0, column=1)
-		srvDCFrame.grid(row=3, column=0)
-		# -- Funeral Home Contact Phone
-		fhcpFrame = ttk.Frame(srvFrame)
-		fhFrame = wlib.drawCombo(fhcpFrame,
-								 width=9,
-								 label='Funeral Home',
-								 var=self.srvDict['Funeral Home'],
-								 vals=data.fun_Homes)
-		fhFrame.grid(row=0, column=0)
-		fcFrame = wlib.drawEntry(fhcpFrame, label='Contact', var=self.srvDict['F. H. Contact'])
-		fcFrame.grid(row=0, column=1)
-		fhicoFrame = ttk.Frame(fhcpFrame)
-		fhraw = Image.open('img/fhome_icon.png')
-		fhraw.thumbnail((32,32))
-		fhimg = ImageTk.PhotoImage(fhraw)
-		fhimglbl = ttk.Label(fhicoFrame, image=fhimg)
-		fhimglbl.image = fhimg
-		fhimglbl.pack()
-		fhicoFrame.grid(row=1, column=0)
-		fpFrame = wlib.drawEntry(fhcpFrame, label="Phone", var=self.srvDict['Contact Phone'])
-		fpFrame.grid(row=1, column=1)
+		scFrame.grid(row=0, column=1, sticky='nw', padx=8)		
 		
-		fhcpFrame.grid(row=4, column=0)
+		# - Funeral Home Contact Phone
+		fhcpFrame = ttk.Frame(srvFrame)
+		fhcpFrame.grid(row=4, column=0, sticky='w', padx=4, pady=4)
+		
+		fhFrame = ttk.Frame(fhcpFrame)
+		fhFrame.grid(row=0, column=0, columnspan=2, sticky='nw')
+		fhImgLabel = wlib.drawImgLabel(fhFrame, self.fhome_icon, size=(32,32))
+		fhImgLabel.grid(row=0, column=0, sticky='s', pady=7)
+		fhCboFrame = wlib.drawCombo(fhFrame,
+								    width=18,
+								    label='Funeral Home',
+								    var=self.srvDict['Funeral Home'],
+								    vals=data.fun_Homes)
+		fhCboFrame.grid(row=0, column=1, sticky='nw', padx=8)
+		
+		fconFrame = ttk.Frame(fhcpFrame)
+		fconFrame.grid(row=1, column=0)
+		fpFrame = wlib.drawEntry(fconFrame,
+								 align='v',
+								 width=14,
+								 label='Phone', 
+								 var=self.srvDict['Contact Phone'])
+		fpFrame.grid(row=0, column=0, sticky='nw')
+		fcFrame = wlib.drawEntry(fconFrame,
+								 align='v',
+								 width=26,
+							     label='Funeral Contact', 
+							     var=self.srvDict['F. H. Contact'])
+		fcFrame.grid(row=0, column=1, sticky='nw', padx=8)
+				
+		
+		# - Organist Cantor Servers 
+		ocsFrame = ttk.Frame(srvFrame)
+		ocsFrame.grid(row=5, column=0, sticky='nw', padx=4, pady=4)
+				
+		orgFrame = ttk.Frame(ocsFrame)
+		orgFrame.grid(row=0, column=0)
+		orgEntFrame = wlib.drawEntry(orgFrame,
+									 width=24,
+								     label='Organist', 
+								     align='v', 
+								     var=self.srvDict['Organist'])								     
+		orgEntFrame.grid(row=0, column=0, sticky='nw', pady=4)
+		
+		canFrame = ttk.Frame(ocsFrame)
+		canFrame.grid(row=0, column=1, sticky='nw', padx=4)
+		canEntFrame = wlib.drawEntry(canFrame,
+									 width=24,
+									 label='Cantor',
+									 align='v',
+									 var=self.srvDict['Cantor'])
+		canEntFrame.grid(row=0, column=0, sticky='nw', pady=4)
+		
+		svrFrame = ttk.Frame(ocsFrame)
+		svrFrame.grid(row=1, column=0, columnspan=2, sticky='nw', pady=4)
+		svrRxCtr = 0
+		for i in range(0, 3):
+			svrLabel = 'Server ' + str(i + 1)
+			svrEFrame = wlib.drawEntry(svrFrame,
+									   width=30,
+									   label=svrLabel,
+									   var=self.srvDict[svrLabel])
+			svrEFrame.grid(row=svrRxCtr, column=0, pady=4)
+			svrRxCtr += 1		
 		
 		''' MIDDLE COLUMN START '''
 		''' ------------------- '''

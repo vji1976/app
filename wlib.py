@@ -116,12 +116,16 @@ def getVals(datadict):
 	for k, v in datadict.items():
 		print("{} : {}".format(k, v.get()))
 		
-def drawEntry(parent, label, var=None, width=20):
+def drawEntry(parent, label, align='h', var=None, width=20):
 	wfr = ttk.Frame(parent)
 	lbl = ttk.Label(wfr, text=label, anchor=tk.W, style='wLabel.TLabel')
 	ent = wEntry(wfr, width=width, textvariable=var)
-	lbl.pack(side=tk.LEFT)
-	ent.pack(side=tk.RIGHT, fill=tk.X, expand=tk.TRUE, padx=8)
+	if align == 'v':
+		lbl.pack(side=tk.TOP, anchor='nw')
+		ent.pack(fill=tk.X, expand=tk.TRUE, anchor='nw')
+	else:
+		lbl.pack(side=tk.LEFT)
+		ent.pack(side=tk.RIGHT, fill=tk.X, expand=tk.TRUE, padx=8)
 	return wfr	
 		
 def drawEntries(parent, dataDict):
@@ -140,7 +144,7 @@ def drawEntries(parent, dataDict):
 	
 def drawDictEntry(parent, width, keystr, datadict):
 	wfr = ttk.Frame(parent)
-	lbl = ttk.Label(wfr, text=keystr)
+	lbl = ttk.Label(wfr, text=keystr, style='wLabel.TLabel')
 	lbl.pack(side=tk.LEFT)
 	ent = ttk.Entry(wfr, width=width,
 				    textvariable=datadict[keystr])
@@ -256,8 +260,8 @@ def drawRadFrame(parent, **kw):
 	lbls = kw['rlabels']
 	var = kw.get('var', None)
 		
-	lbl = ttk.Label(wfr, text=wlbl)
-	lbl.grid(row=0, column=0, columnspan=len(lbls))
+	lbl = ttk.Label(wfr, text=wlbl, style='wLabel.TLabel')
+	lbl.grid(row=0, column=0, columnspan=len(lbls), sticky='nw')
 	radfra = drawRadios(wfr, labels=lbls, var=var)
 	radfra.grid(row=1, column=0)
 	return wfr
@@ -275,7 +279,7 @@ def drawImgLabel(parent, imgpath, size=(128,128)):
 	raw = Image.open(imgpath)
 	raw.thumbnail(size)
 	pimg = ImageTk.PhotoImage(raw)
-	imglbl = ttk.Label(parent, image=pimg)
+	imglbl = ttk.Label(parent, image=pimg, anchor=tk.S)
 	imglbl.image = pimg	# keep a reference to image so it doesn't
 	return imglbl		# get deleted in python garbage collection
 	
