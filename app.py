@@ -20,6 +20,8 @@ from tkinter import messagebox
 # 3RD PARTY IMPORTS
 from tkcalendar import DateEntry
 from PIL import Image, ImageTk
+from docx import Document
+from docx.shared import Pt
 # CUSTOM IMPORTS
 import wlib
 import data
@@ -45,17 +47,19 @@ class App(tk.Tk):
 		self.drawgui()
 		
 	def initvars(self):
-		self.dataDicts = []	# this main list will hold all
+		self.dataDict = {}	# this main list will hold all
 							# data dictionaries for access later
 		# main data dictionary population
-		self.serviceDict = self.makeDataDict(data.srv_Labels)
+		self.srvDict = self.makeDataDict(data.srv_Labels)
 		self.dpiDict = self.makeDataDict(data.dpi_Labels)
 		self.nokDict = self.makeDataDict(data.nok_Labels)
 		self.cemDict = self.makeDataDict(data.cem_Labels)
-		self.serviceDict["Service Type"].set("Full Funeral")
+		self.srvDict["Service Type"].set("Full Funeral")
 		# add data dicts
-		self.dataDicts.append(self.serviceDict)
-		self.dataDicts.append(self.dpiDict)
+		self.dataDict["Service Information"] = self.srvDict
+		self.dataDict["Deceased Personal Information"] = self.dpiDict
+		self.dataDict["Next of Kin"] = self.nokDict
+		self.dataDict["Cemetery Information"] = self.cemDict
 		# status bar text variable for messages
 		self.statusTxt = tk.StringVar()
 		self.statusTxt.set("Program Running")
@@ -63,6 +67,7 @@ class App(tk.Tk):
 		self.fb_img_path = 'img/fb_tool.png'
 		self.pa_img_path = 'img/mp_tool.png'
 		self.tw_img_path = 'img/tw_tool.png'
+		self.fhome_icon = 'img/fhome_icon.png'
 		# url paths
 		self.fb_url = data.social_paths["fb"]
 		self.tw_url = data.social_paths["tw"]
@@ -72,7 +77,7 @@ class App(tk.Tk):
 		self.menubar = wlib.wMenu(self)
 		# file menu commands
 		self.menubar.fm.add_command(label="Create Document",
-									command=lambda: self.createWordDoc(self.dataDicts))
+									command=lambda: self.createWordDoc(self.dataDict))
 		self.menubar.fm.add_separator()
 		self.bind_all('<Control-q>', lambda e: sys.exit())
 		self.menubar.fm.add_command(label="Quit", underline=0,
@@ -106,97 +111,121 @@ class App(tk.Tk):
 		lcol.columnconfigure(0, weight=1)	# allows child widgets to fill space of column
 		
 		# - Funeral Information Frame
-		funInfoFrame = wlib.wLabelFrame(lcol, text="Service Information")
-		funInfoFrame.grid(row=0, column=0, sticky='new')
-		## funeral number
-		funNumFrame = ttk.Frame(funInfoFrame)
-		funNumFrame.grid(row=0, column=0, sticky='nw', padx=4, pady=6)
-		funNumLabel = ttk.Label(funNumFrame, text="Service Number", style='wLabel.TLabel')
-		funNumLabel.grid(row=0, column=0)
-		funNumEnt = ttk.Entry(funNumFrame, width=8)
-		funNumEnt["textvariable"] = self.serviceDict["Service Number"]
-		funNumEnt.grid(row=0, column=1)		
-		## service type
-		serviceTypeFrame = ttk.Frame(funInfoFrame)
-		serviceTypeFrame.grid(row=1, column=0, sticky='nw', padx=4, pady=6)
-		serviceTypeLbl = ttk.Label(serviceTypeFrame, text="Select Service Type", style='wLabel.TLabel')
-		serviceTypeLbl.grid(row=0, column=0, sticky='nw')		
-		strad_frame = wlib.drawRadios(serviceTypeFrame,
-									  labels=data.srv_Types,
-						              var=self.serviceDict["Service Type"])		
-		strad_frame.grid(row=1, column=0, sticky='nw')		
-		## funeral home info combo and entries
-		fhomeFrame = ttk.Frame(funInfoFrame)
-		fhomeFrame.grid(row=2, column=0, sticky='nw', padx=4, pady=6)		
-		cbofra = wlib.drawCombo(fhomeFrame, width=10, label="Funeral Home", vals=data.fun_Homes,
-								var=self.serviceDict["Funeral Home"])
-		cbofra.grid(row=0, column=0, sticky='nw')		
-		fconFrame = ttk.Frame(fhomeFrame)
-		fconFrame.grid(row=0, column=1, sticky='nw', padx=10)
-		fconLabel = ttk.Label(fconFrame, text="F. H. Contact", style='wLabel.TLabel')
-		fconLabel.grid(row=0, column=0, sticky='nw')
-		self.fcontactEntry = ttk.Entry(fconFrame, width=28, 
-									   textvariable=self.serviceDict["F. H. Contact"])
-		self.fcontactEntry.grid(row=1, column=0, sticky='nw')
+		srvFrame = wlib.wLabelFrame(lcol, text="Service Information")
+		srvFrame.grid(row=0, column=0, sticky='new')
+		# -- Service Number
+		srvNumFrame = wlib.drawDictEntry(srvFrame,
+										 width=6,
+										 keystr="Service Number",
+										 datadict=self.srvDict)
+		srvNumFrame.grid(row=0, column=0, sticky='nw', padx=4, pady=4)
+		# -- Service Type
+		srvTypeFrame = wlib.drawRadFrame(srvFrame,
+										 wlabel='Service Type',
+										 rlabels=data.srv_Types,
+										 var=self.srvDict['Service Type'])
+		srvTypeFrame.grid(row=1, column=0, sticky='nw', padx=4, pady=4)
 		
-		fhomeNumFrame = ttk.Frame(fhomeFrame)
-		fhomeNumFrame.grid(row=1, column=1, sticky='ne', padx=10)
-		fhomeNumLabel = ttk.Label(fhomeNumFrame, text="Contact Phone #", style='wLabel.TLabel')
-		fhomeNumLabel.grid(row=0, column=0)
-		self.fconNumEntry = ttk.Entry(fhomeNumFrame, width=16,
-									  textvariable=self.serviceDict["Contact Phone"])
-		self.fconNumEntry.grid(row=1, column=0)		
-		## date - time - place combo boxes
-		dtpFrame = ttk.Frame(funInfoFrame)
-		dtpFrame.grid(row=3, column=0, sticky='nw', padx=4, pady=6)
-		wlib.drawDate(dtpFrame, label='Date', width=9, orient='vt',
-					  var=self.serviceDict["Service Date"]).grid(row=0, column=0)
-		wlib.drawCombo(dtpFrame, width=7, label='Time', vals=data.times, 
-					   var=self.serviceDict["Service Time"]).grid(row=0, column=1, padx=6)
-		wlib.drawCombo(dtpFrame, width=18, label='Location', vals=data.srv_Places,
-					   var=self.serviceDict["Service Location"]).grid(row=0, column=2)					   
-		## day - celebrant combo boxes
-		dcFrame = ttk.Frame(funInfoFrame)
-		dcFrame.grid(row=4, column=0, sticky='nw', padx=4, pady=6)
-		wlib.drawCombo(dcFrame, width=8, label="Day",
-					   var=self.serviceDict["Service Day"], 
-					   vals=data.days).grid(row=0, column=0)
-		wlib.drawCombo(dcFrame, width=16, label="Celebrant",
-					   var=self.serviceDict["Celebrant"], 
-					   vals=data.celebrants).grid(row=0, column=1, padx=4)					   
-		## organist - cantor -servers
-		ocsFrame = ttk.Frame(funInfoFrame)
-		ocsFrame.grid(row=5, column=0, sticky='nw', padx=4, pady=6)
-		organistLbl = ttk.Label(ocsFrame, text="Organist", style='wLabel.TLabel')
-		organistLbl.grid(row=0, column=0, sticky='nw')
-		self.organistEnt = ttk.Entry(ocsFrame, width=24,
-						   textvariable=self.serviceDict["Organist"]).grid(row=1, column=0, sticky='nw')
-		cantorLbl = ttk.Label(ocsFrame, text="Cantor", style='wLabel.TLabel')
-		cantorLbl.grid(row=0, column=1, sticky='nw', padx=4)
-		self.cantorEnt = ttk.Entry(ocsFrame, width=24,
-						 textvariable=self.serviceDict["Cantor"]).grid(row=1, column=1, padx=4)								   
-		srvFrame = ttk.Frame(funInfoFrame)
-		srvFrame.grid(row=6, column=0, sticky='nsew', padx=4, pady=6)
-		srvNameFrame = ttk.Frame(srvFrame)
-		srvNameFrame.grid(row=0, column=0)
+		# -- Service Date Time Location
+		srvDTLFrame = ttk.Frame(srvFrame)
+		srvDTLFrame.grid(row=2, column=0, sticky='nw', padx=4, pady=4)
+		sdFrame = wlib.drawDate(srvDTLFrame, 
+								label='Date',
+								var=self.srvDict['Service Date'])
+		sdFrame.grid(row=0, column=0, sticky='nw')		
+		stFrame = wlib.drawCombo(srvDTLFrame,
+								 width=7,
+							     label='Time',
+							     var=self.srvDict['Service Time'],
+							     vals=data.times)
+		stFrame.grid(row=0, column=1, sticky='nw', padx=8)		
+		slFrame = wlib.drawCombo(srvDTLFrame,
+								 width=18,
+							     label='Location',
+							     var=self.srvDict['Service Location'],
+							     vals=data.srv_Places)
+		slFrame.grid(row=0, column=2, sticky='nw')
 		
-		lblctr = 0		# need to seed labels at 0
-		entctr = 1		# seed entries at 1 and add 2 to both to
-						# maintain column seperation and correct row numbers
-		for i in range(3):
-			keystr = "Server " + str(i+1)
-			lbl = ttk.Label(srvNameFrame, text=keystr, style='wLabel.TLabel')
-			lbl.grid(row=lblctr, column=0, sticky='nw')
-			lblctr += 2
-			self.serverEnt = ttk.Entry(srvNameFrame, width=24,
-									   textvariable=self.serviceDict[keystr])
-			self.serverEnt.grid(row=entctr, column=0, sticky='nw')
-			entctr += 2
+		# -- Service Day Celebrant
+		srvDCFrame = ttk.Frame(srvFrame)
+		srvDCFrame.grid(row=3, column=0, sticky='nw', padx=4, pady=4)
+		sdayFrame = wlib.drawCombo(srvDCFrame,
+								   width=12,
+								   label='Day',
+								   var=self.srvDict['Service Day'],
+								   vals=data.days)
+		sdayFrame.grid(row=0, column=0, sticky='nw')
+		scFrame = wlib.drawCombo(srvDCFrame,
+								 width=16,
+								 label='Celebrant',
+								 var=self.srvDict['Celebrant'],
+								 vals=data.celebrants)
+		scFrame.grid(row=0, column=1, sticky='nw', padx=8)		
+		
+		# - Funeral Home Contact Phone
+		fhcpFrame = ttk.Frame(srvFrame)
+		fhcpFrame.grid(row=4, column=0, sticky='w', padx=4, pady=4)
+		
+		fhFrame = ttk.Frame(fhcpFrame)
+		fhFrame.grid(row=0, column=0, columnspan=2, sticky='nw')
+		fhImgLabel = wlib.drawImgLabel(fhFrame, self.fhome_icon, size=(32,32))
+		fhImgLabel.grid(row=0, column=0, sticky='s', pady=7)
+		fhCboFrame = wlib.drawCombo(fhFrame,
+								    width=18,
+								    label='Funeral Home',
+								    var=self.srvDict['Funeral Home'],
+								    vals=data.fun_Homes)
+		fhCboFrame.grid(row=0, column=1, sticky='nw', padx=8)
+		
+		fconFrame = ttk.Frame(fhcpFrame)
+		fconFrame.grid(row=1, column=0)
+		fpFrame = wlib.drawEntry(fconFrame,
+								 align='v',
+								 width=14,
+								 label='Phone', 
+								 var=self.srvDict['Contact Phone'])
+		fpFrame.grid(row=0, column=0, sticky='nw')
+		fcFrame = wlib.drawEntry(fconFrame,
+								 align='v',
+								 width=26,
+							     label='Funeral Contact', 
+							     var=self.srvDict['F. H. Contact'])
+		fcFrame.grid(row=0, column=1, sticky='nw', padx=8)
 				
-		srvImgFrame = ttk.Frame(srvFrame)
-		srvImgFrame.grid(row=0, column=1, sticky='news')
-		srvImgLabel = wlib.drawImgLabel(srvImgFrame, 'img/servers.png')
-		srvImgLabel.grid(row=0, column=0, sticky='nswe', pady=4)			
+		
+		# - Organist Cantor Servers 
+		ocsFrame = ttk.Frame(srvFrame)
+		ocsFrame.grid(row=5, column=0, sticky='nw', padx=4, pady=4)
+				
+		orgFrame = ttk.Frame(ocsFrame)
+		orgFrame.grid(row=0, column=0)
+		orgEntFrame = wlib.drawEntry(orgFrame,
+									 width=24,
+								     label='Organist', 
+								     align='v', 
+								     var=self.srvDict['Organist'])								     
+		orgEntFrame.grid(row=0, column=0, sticky='nw', pady=4)
+		
+		canFrame = ttk.Frame(ocsFrame)
+		canFrame.grid(row=0, column=1, sticky='nw', padx=4)
+		canEntFrame = wlib.drawEntry(canFrame,
+									 width=24,
+									 label='Cantor',
+									 align='v',
+									 var=self.srvDict['Cantor'])
+		canEntFrame.grid(row=0, column=0, sticky='nw', pady=4)
+		
+		svrFrame = ttk.Frame(ocsFrame)
+		svrFrame.grid(row=1, column=0, columnspan=2, sticky='nw', pady=4)
+		svrRxCtr = 0
+		for i in range(0, 3):
+			svrLabel = 'Server ' + str(i + 1)
+			svrEFrame = wlib.drawEntry(svrFrame,
+									   width=30,
+									   label=svrLabel,
+									   var=self.srvDict[svrLabel])
+			svrEFrame.grid(row=svrRxCtr, column=0, pady=4)
+			svrRxCtr += 1		
 		
 		''' MIDDLE COLUMN START '''
 		''' ------------------- '''
@@ -225,7 +254,7 @@ class App(tk.Tk):
 		cemFrame.grid(row=0, column=0, sticky='new')
 		cemFrame.columnconfigure(0, weight=1)
 		wlib.drawCemEntries(cemFrame, self.cemDict)
-		# resources frame
+		# - Resources Frame
 		resFrame = wlib.wLabelFrame(rcol, text="Resources")
 		resFrame.grid(row=1, column=0, sticky='new')
 		fhweblinkFrame = ttk.Frame(resFrame)
@@ -247,10 +276,40 @@ class App(tk.Tk):
 		dataDict = {k : tk.StringVar() for k in labels}
 		return dataDict
 		
-	def createWordDoc(self, datadicts):
-		for datadict in datadicts:
-			for k, v in datadict.items():
-				print("{} : {}".format(k, v.get()))
+	def createWordDoc(self, datadict):
+		d = Document()		
+		d.add_heading('OLOP Funeral ~ Service ~ Burial Worksheet')
+		t = d.add_table(rows=1, cols=2)
+		cells = t.rows[0].cells
+		ctr = 0
+		for k, v in datadict.items():
+			if str(k) == 'Deceased Personal Information' or str(k) == 'Next of Kin':
+				p = cells[1].add_paragraph()
+			else:
+				p = cells[0].add_paragraph()
+			p_format = p.paragraph_format
+			p_format.line_spacing = Pt(18)
+			headrun = p.add_run("{}\n".format(k))
+			hrfont = headrun.font
+			hrfont.underline = True
+			hrfont.name = 'Calibri'
+			hrfont.size = Pt(14)
+			for l, i in v.items():
+				labelrun = p.add_run("{}: ".format(l))
+				lrfont = labelrun.font
+				lrfont.name = 'Calibri'
+				lrfont.size = Pt(10)
+				inforun = p.add_run("{}\n".format(i.get()))
+				iffont = inforun.font
+				iffont.name = 'Calibri'
+				iffont.size = Pt(11)
+				iffont.bold = True
+			ctr += 1
+		try:
+			d.save("funtest.docx")
+		except PermissionError as pe:
+			# this error occurs when document is open in word
+			messagebox.showerror("Word Document Error", str(pe))			
 		
 	def updateStatus(self, msg):
 		self.statusTxt.set(msg)
