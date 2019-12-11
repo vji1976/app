@@ -280,36 +280,29 @@ class App(tk.Tk):
 		d = Document()		
 		d.add_heading('OLOP Funeral ~ Service ~ Burial Worksheet')
 		t = d.add_table(rows=1, cols=2)
-		cells = t.rows[0].cells
-		ctr = 0
+		row = t.rows[0]
 		for k, v in datadict.items():
-			if str(k) == 'Deceased Personal Information' or str(k) == 'Next of Kin':
-				p = cells[1].add_paragraph()
+			if k == 'Deceased Personal Information' or k == 'Next of Kin':
+				p = row.cells[1].add_paragraph(k)
 			else:
-				p = cells[0].add_paragraph()
-			p_format = p.paragraph_format
-			p_format.line_spacing = Pt(18)
-			headrun = p.add_run("{}\n".format(k))
-			hrfont = headrun.font
-			hrfont.underline = True
-			hrfont.name = 'Calibri'
-			hrfont.size = Pt(14)
-			for l, i in v.items():
-				labelrun = p.add_run("{}: ".format(l))
-				lrfont = labelrun.font
-				lrfont.name = 'Calibri'
-				lrfont.size = Pt(10)
-				inforun = p.add_run("{}\n".format(i.get()))
-				iffont = inforun.font
-				iffont.name = 'Calibri'
-				iffont.size = Pt(11)
-				iffont.bold = True
-			ctr += 1
+				p = row.cells[0].add_paragraph(k)
+			for info_key, info_val in v.items():
+				label_run = p.add_run("{}: ".format(info_key))
+				data_run = p.add_run("{}".format(info_val.get()))
+				new_line = p.add_run("\n")		
 		try:
-			d.save("funtest.docx")
+			d.save("test.docx")
 		except PermissionError as pe:
 			# this error occurs when document is open in word
-			messagebox.showerror("Word Document Error", str(pe))			
+			messagebox.showerror("Word Document Error", str(pe))
+			
+	def openWordDoc(self):
+		file_name = filedialog.askopenfilename(initialdir="/",
+											   title="Open A Service File",
+											   filetypes=(("Word Documents", "*.docx"),
+														  ("All Files", "*.*")))
+		return file_name
+					
 		
 	def updateStatus(self, msg):
 		self.statusTxt.set(msg)
