@@ -277,21 +277,18 @@ class App(tk.Tk):
 		return dataDict
 		
 	def createWordDoc(self, datadict):
-		d = Document()		
-		d.add_heading('OLOP Funeral ~ Service ~ Burial Worksheet')
-		t = d.add_table(rows=1, cols=2)
-		row = t.rows[0]
-		for k, v in datadict.items():
-			if k == 'Deceased Personal Information' or k == 'Next of Kin':
-				p = row.cells[1].add_paragraph(k)
-			else:
-				p = row.cells[0].add_paragraph(k)
-			for info_key, info_val in v.items():
-				label_run = p.add_run("{}: ".format(info_key))
-				data_run = p.add_run("{}".format(info_val.get()))
-				new_line = p.add_run("\n")		
+		"""
+			docx adds an initial paragraph automatically to cells in a table
+		"""
+		col2_titles = ['Deceased Personal Information',
+					   'Next of Kin']
+		doc = Document()
+		doc.add_heading("OLOP FUNERAL SERVICE")
+		table = doc.add_table(rows=1, cols=2)
+		row = table.rows[0]			
+		
 		try:
-			d.save("test.docx")
+			doc.save("test.docx")
 		except PermissionError as pe:
 			# this error occurs when document is open in word
 			messagebox.showerror("Word Document Error", str(pe))
