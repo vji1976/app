@@ -280,12 +280,24 @@ class App(tk.Tk):
 		"""
 			docx adds an initial paragraph automatically to cells in a table
 		"""
-		col2_titles = ['Deceased Personal Information',
-					   'Next of Kin']
+		headings = list(self.dataDict.keys())
+		for heading in headings:
+			print(heading)
 		doc = Document()
 		doc.add_heading("OLOP FUNERAL SERVICE")
+		
 		table = doc.add_table(rows=1, cols=2)
-		row = table.rows[0]			
+		
+		dpi_svi_cells = table.rows[0].cells
+		dpi_svi_cells[0].text = headings[0]
+		dpi_svi_cells[1].text = headings[1]
+		
+		nok_cem_cells = table.add_row().cells
+		nok_cem_cells[0].text = headings[2]
+		nok_cem_cells[1].text = headings[3]
+			
+		doc.save('test.docx')
+		
 		
 		try:
 			doc.save("test.docx")
