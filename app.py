@@ -21,7 +21,7 @@ from tkinter import messagebox
 from tkcalendar import DateEntry
 from PIL import Image, ImageTk
 from docx import Document
-from docx.shared import Pt
+from docx.shared import Pt, RGBColor
 # CUSTOM IMPORTS
 import wlib
 import data
@@ -281,20 +281,40 @@ class App(tk.Tk):
 			docx adds an initial paragraph automatically to cells in a table
 		"""
 		headings = list(self.dataDict.keys())
-		for heading in headings:
-			print(heading)
+		print()
+			
+		
 		doc = Document()
-		doc.add_heading("OLOP FUNERAL SERVICE")
+		# doc.add_heading("OLOP FUNERAL SERVICE")
 		
 		table = doc.add_table(rows=1, cols=2)
 		
-		dpi_svi_cells = table.rows[0].cells
+		hdr_cells = table.rows[0].cells
+		hdr_cells[0].text = "OLOP FUNERAL SERVICE DATA SHEET"
+		hdr_cells[1].text = "Funeral Number: " + self.dataDict[headings[0]]["Service Number"].get()
+		
+		dpi_svi_cells = table.add_row().cells
 		dpi_svi_cells[0].text = headings[0]
 		dpi_svi_cells[1].text = headings[1]
 		
 		nok_cem_cells = table.add_row().cells
 		nok_cem_cells[0].text = headings[2]
 		nok_cem_cells[1].text = headings[3]
+		
+		dpi_tbl = dpi_svi_cells[0].add_table(rows=1, cols=2)
+		
+		for k, v in self.dataDict[headings[0]].items():
+			row = dpi_tbl.add_row()
+			row.cells[0].text = str(k)
+			row.cells[1].text = str(v.get())
+			row.cells[0].paragraphs[0].runs[0].bold = True
+			kfont = row.cells[0].paragraphs[0].runs[0].font
+			kfont.name = 'Calibri'
+			kfont.size = Pt(11)
+			vfont = row.cells[1].paragraphs[0].runs[0].font
+			vfont.name = 'Calibri'
+			vfont.size = Pt(10)
+			vfont.color.rgb = RGBColor(0x42, 0x24, 0xE9)
 			
 		doc.save('test.docx')
 		
@@ -304,7 +324,7 @@ class App(tk.Tk):
 		except PermissionError as pe:
 			# this error occurs when document is open in word
 			messagebox.showerror("Word Document Error", str(pe))
-			
+	
 	def openWordDoc(self):
 		file_name = filedialog.askopenfilename(initialdir="/",
 											   title="Open A Service File",
