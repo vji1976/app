@@ -302,7 +302,30 @@ class App(tk.Tk):
 		nok_cem_cells[1].text = headings[3]
 		
 		dpi_tbl = dpi_svi_cells[0].add_table(rows=1, cols=2)
+		nok_tbl = nok_cem_cells[0].add_table(rows=1, cols=2)
+		svi_tbl = dpi_svi_cells[1].add_table(rows=1, cols=2)	
+		cem_tbl = nok_cem_cells[1].add_table(rows=1, cols=2)
 		
+		info_data_tables = [dpi_tbl, svi_tbl, nok_tbl, cem_tbl]
+		info_dict = {}
+						
+		for heading in headings:
+			info_dict[heading] = info_data_tables[headings.index(heading)]
+		
+		from docx.enum.table import WD_ALIGN_VERTICAL
+		
+		for k in info_dict.keys():
+			for label, data in self.dataDict[k].items():
+				row = info_dict[k].add_row()
+				row.cells[0].text = str(label)
+				row.cells[1].text = str(data.get())	
+			info_dict[k].rows[0].cells[0].vertical_aligment = WD_ALIGN_VERTICAL.TOP
+				
+		
+		dpi_svi_cells[0].merge(nok_cem_cells[0])
+		dpi_svi_cells[1].merge(nok_cem_cells[1])		
+				
+		"""		
 		for k, v in self.dataDict[headings[0]].items():
 			row = dpi_tbl.add_row()
 			row.cells[0].text = str(k)
@@ -315,6 +338,7 @@ class App(tk.Tk):
 			vfont.name = 'Calibri'
 			vfont.size = Pt(10)
 			vfont.color.rgb = RGBColor(0x42, 0x24, 0xE9)
+		"""
 			
 		doc.save('test.docx')
 		
