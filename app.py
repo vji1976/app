@@ -21,7 +21,8 @@ from tkinter import messagebox
 from tkcalendar import DateEntry
 from PIL import Image, ImageTk
 from docx import Document
-from docx.shared import Pt, RGBColor
+from docx.shared import Pt, Cm, Inches, RGBColor
+from docx.enum.table import WD_TABLE_ALIGNMENT
 # CUSTOM IMPORTS
 import wlib
 import data
@@ -281,67 +282,58 @@ class App(tk.Tk):
 			docx adds an initial paragraph automatically to cells in a table
 		"""
 		headings = list(self.dataDict.keys())
-		print()
-			
+		print(headings)
 		
+		# -- BEGIN WORD DOCUMENT CODE HERE -- #
 		doc = Document()
-		# doc.add_heading("OLOP FUNERAL SERVICE")
 		
-		table = doc.add_table(rows=1, cols=2)
+		sections = doc.sections					# only 1 section in our doc
+		sections[0].top_margin = Inches(.2)		# sets page top margin
+		sections[0].left_margin = Inches(.5)	# increases table width due to autofit
+												# using left and right margin
+		sections[0].right_margin = Inches(.5)
 		
-		hdr_cells = table.rows[0].cells
-		hdr_cells[0].text = "OLOP FUNERAL SERVICE DATA SHEET"
-		hdr_cells[1].text = "Funeral Number: " + self.dataDict[headings[0]]["Service Number"].get()
+		# HEADING TABLE START #
+		head_tbl = doc.add_table(rows=1, cols=2)	# heading data table creation
+		head_tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
+		head_tbl.style = 'Table Grid'
 		
-		dpi_svi_cells = table.add_row().cells
-		dpi_svi_cells[0].text = headings[0]
-		dpi_svi_cells[1].text = headings[1]
+		head_cells = head_tbl.rows[0].cells
+		head_cells[0].text = "OLOP DEATH REGISTERY WORKSHEET"
+		hc1_font = head_cells[0].paragraphs[0].runs[0].font
+		hc1_font.name = 'Calibri'
+		hc1_font.size = Pt(14)
+		hc1_font.bold = True
+		hc1_font.underline = True
+		hc1_font.color.rgb = RGBColor(0, 0, 255)
 		
-		nok_cem_cells = table.add_row().cells
-		nok_cem_cells[0].text = headings[2]
-		nok_cem_cells[1].text = headings[3]
+		# *** SPACER *** #
+		doc.add_paragraph()
+		# *** SPACER *** #
 		
-		dpi_tbl = dpi_svi_cells[0].add_table(rows=1, cols=2)
-		nok_tbl = nok_cem_cells[0].add_table(rows=1, cols=2)
-		svi_tbl = dpi_svi_cells[1].add_table(rows=1, cols=2)	
-		cem_tbl = nok_cem_cells[1].add_table(rows=1, cols=2)
+		# BODY TABLE START #
+		bod_tbl = doc.add_table(rows=2, cols=2)		# body table for program data		
+		bod_tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
+		bod_tbl.style = 'Table Grid'
 		
-		info_data_tables = [dpi_tbl, svi_tbl, nok_tbl, cem_tbl]
-		info_dict = {}
-						
-		for heading in headings:
-			info_dict[heading] = info_data_tables[headings.index(heading)]
+		bod_r1_cells = bod_tbl.rows[0].cells
+		bod_r2_cells = bod_tbl.rows[1].cells
 		
-		from docx.enum.table import WD_ALIGN_VERTICAL
-		
-		for k in info_dict.keys():
-			for label, data in self.dataDict[k].items():
-				row = info_dict[k].add_row()
-				row.cells[0].text = str(label)
-				row.cells[1].text = str(data.get())	
-			info_dict[k].rows[0].cells[0].vertical_aligment = WD_ALIGN_VERTICAL.TOP
-				
-		
-		dpi_svi_cells[0].merge(nok_cem_cells[0])
-		dpi_svi_cells[1].merge(nok_cem_cells[1])		
-				
-		"""		
-		for k, v in self.dataDict[headings[0]].items():
-			row = dpi_tbl.add_row()
+		# cell 0, 0 (srv cell)
+		srv_tbl = bod_r1_cells[0].add_table(rows=1, cols=2)
+		srv_tbl.rows[0].cells[0].text = 'Service Information'
+		for k, v in self.dataDict['Service Information'].items():
+			row = srv_tbl.add_row()
 			row.cells[0].text = str(k)
-			row.cells[1].text = str(v.get())
-			row.cells[0].paragraphs[0].runs[0].bold = True
-			kfont = row.cells[0].paragraphs[0].runs[0].font
-			kfont.name = 'Calibri'
-			kfont.size = Pt(11)
-			vfont = row.cells[1].paragraphs[0].runs[0].font
-			vfont.name = 'Calibri'
-			vfont.size = Pt(10)
-			vfont.color.rgb = RGBColor(0x42, 0x24, 0xE9)
-		"""
+			row.cells[1].text = v.get()
 			
-		doc.save('test.docx')
+		bod_r1_cells[1].text = "BODY CELL 0, 1"
+		bod_r2_cells[0].text = "BODY CELL 1, 0"
+		bod_r2_cells[1].text = "BODY CELL 1, 1"
 		
+		
+		doc.save('test.docx')
+		# -- END WORD DOCUMENT CODE HERE -- #
 		
 		try:
 			doc.save("test.docx")
