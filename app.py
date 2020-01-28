@@ -282,6 +282,8 @@ class App(tk.Tk):
 			docx adds an initial paragraph automatically to cells in a table
 		"""
 		headings = list(self.dataDict.keys())
+		data_tables = {}						# will hold tables with a key that is a heading
+												# and also a key in data dict
 		print(headings)
 		
 		# -- BEGIN WORD DOCUMENT CODE HERE -- #
@@ -314,22 +316,82 @@ class App(tk.Tk):
 		# BODY TABLE START #
 		bod_tbl = doc.add_table(rows=2, cols=2)		# body table for program data		
 		bod_tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
-		bod_tbl.style = 'Table Grid'
+		# bod_tbl.style = 'Table Grid'				# uncomment to add borders for design		
 		
 		bod_r1_cells = bod_tbl.rows[0].cells
 		bod_r2_cells = bod_tbl.rows[1].cells
 		
-		# cell 0, 0 (srv cell)
-		srv_tbl = bod_r1_cells[0].add_table(rows=1, cols=2)
+		# cell 0, 0 (dpi cell)
+		dpi_tbl = bod_r1_cells[0].add_table(rows=1, cols=2)
+		dpi_tbl.rows[0].cells[0].text = 'Deceased Personal'
+		dpi_head_font = dpi_tbl.rows[0].cells[0].paragraphs[0].runs[0].font
+		dpi_head_font.name = 'Calibri'
+		dpi_head_font.size = Pt(12)
+		dpi_head_font.bold = True
+		dpi_head_font.color.rgb = RGBColor(0, 0, 0)
+		dpi_tbl.style = 'Medium List 1'
+		
+		# cell 0, 1 (srv cell)
+		srv_tbl = bod_r1_cells[1].add_table(rows=1, cols=2)
 		srv_tbl.rows[0].cells[0].text = 'Service Information'
-		for k, v in self.dataDict['Service Information'].items():
-			row = srv_tbl.add_row()
-			row.cells[0].text = str(k)
-			row.cells[1].text = v.get()
+		srv_head_font = srv_tbl.rows[0].cells[0].paragraphs[0].runs[0].font
+		srv_head_font.name = 'Calibri'
+		srv_head_font.size = Pt(12)
+		srv_head_font.bold = True
+		srv_head_font.color.rgb = RGBColor(0, 0, 0)
+		srv_tbl.style = 'Medium List 1'
+		
+		# cell 1, 0 (nok cell)
+		nok_tbl = bod_r2_cells[0].add_table(rows=1, cols=2)
+		nok_tbl.rows[0].cells[0].text = 'Next of Kin'
+		nok_head_font = nok_tbl.rows[0].cells[0].paragraphs[0].runs[0].font
+		nok_head_font.name = 'Calibri'
+		nok_head_font.size = Pt(12)
+		nok_head_font.bold = True
+		nok_head_font.color.rgb = RGBColor(0, 0, 0)
+		nok_tbl.style = 'Medium List 1'
+		
+		# cell 1, 1 (cem cell)
+		cem_tbl = bod_r2_cells[1].add_table(rows=1, cols=2)
+		cem_tbl.rows[0].cells[0].text = 'Cemetery & Burial Info'
+		cem_head_font = cem_tbl.rows[0].cells[0].paragraphs[0].runs[0].font
+		cem_head_font.name = 'Calibri'
+		cem_head_font.size = Pt(12)
+		cem_head_font.bold = True
+		cem_head_font.color.rgb = RGBColor(0, 0, 0)
+		cem_tbl.style = 'Medium List 1'
+		
+		data_tables['Deceased Personal Information'] = dpi_tbl
+		data_tables['Service Information'] = srv_tbl
+		data_tables['Next of Kin'] = nok_tbl
+		data_tables['Cemetery Information'] = cem_tbl
+		
+		
+		for lbl, tbl in data_tables.items():
 			
-		bod_r1_cells[1].text = "BODY CELL 0, 1"
-		bod_r2_cells[0].text = "BODY CELL 1, 0"
-		bod_r2_cells[1].text = "BODY CELL 1, 1"
+			for k, v in self.dataDict[lbl].items():
+				row = tbl.add_row()
+				row.height = Cm(.75)
+				row.cells[0].text = str(k)
+				row.cells[1].text = v.get()
+				# key font for label cells
+				kfont = row.cells[0].paragraphs[0].runs[0].font
+				kfont.name = 'Calibri'
+				kfont.size = Pt(12)
+				kfont.color.rgb = RGBColor(0, 0, 0)
+				kfont.bold = True
+				# value font for data value cells
+				vfont = row.cells[1].paragraphs[0].runs[0].font
+				vfont.name = 'Calibri'
+				vfont.size = Pt(12)
+				vfont.color.rgb = RGBColor(64, 64, 64)
+				vfont.bold = True
+				
+				# row.cells[0].merge(row.cells[1])		
+		
+		
+		bod_r1_cells[0].merge(bod_r2_cells[0])
+		bod_r1_cells[1].merge(bod_r2_cells[1])
 		
 		
 		doc.save('test.docx')
