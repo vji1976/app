@@ -114,7 +114,9 @@ fhome_links = [('Guerriero Funeral Home', "https://www.guerrierofuneralhome.com/
 			   
 social_paths = {"fb": 'https://www.facebook.com/OLOPAshtabula/',
 				"tw": 'https://twitter.com/OLOPAshtabula',
-				"mp": 'https://myparishapp.com/'}
+				"mp": 'https://myparishapp.com/',
+				"ch": 'https://www.google.com',
+				"yt": 'https://youtube.com/UCm_DvVqUQbbH4dTRGabUdkA'}
 				
 favorite_paths = {"usccb": 'http://www.usccb.org/prayer-and-worship/bereavement-and-funerals/readings-for-the-funeral-liturgy.cfm',
 				  "sbo": 'https://obituaries.starbeacon.com/',

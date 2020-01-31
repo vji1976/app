@@ -65,14 +65,18 @@ class App(tk.Tk):
 		self.statusTxt = tk.StringVar()
 		self.statusTxt.set("Program Running")
 		# image paths
-		self.fb_img_path = 'img/fb_tool.png'
-		self.pa_img_path = 'img/mp_tool.png'
-		self.tw_img_path = 'img/tw_tool.png'
+		self.fb_img_path = 'img/facebook_xui.png'
+		self.tw_img_path = 'img/twitter_xui.png'
+		self.pa_img_path = 'img/myparish_xui.png'
+		self.ch_img_path = 'img/chrome_xui.png'
+		self.yt_img_path = 'img/youtube_xui.png'
 		self.fhome_icon = 'img/fhome_icon.png'
 		# url paths
 		self.fb_url = data.social_paths["fb"]
 		self.tw_url = data.social_paths["tw"]
-		self.pa_url = data.social_paths["mp"]		
+		self.pa_url = data.social_paths["mp"]
+		self.ch_url = data.social_paths["ch"]
+		self.yt_url = data.social_paths["yt"]	
 		
 	def drawmenu(self):
 		self.menubar = wlib.wMenu(self)
@@ -103,6 +107,8 @@ class App(tk.Tk):
 		wlib.drawImgWebLink(tbar, self.fb_img_path, self.fb_url).grid(row=0, column=0, sticky='nw', padx=2)
 		wlib.drawImgWebLink(tbar, self.tw_img_path, self.tw_url).grid(row=0, column=1, sticky='nw', padx=2)
 		wlib.drawImgWebLink(tbar, self.pa_img_path, self.pa_url).grid(row=0, column=2, sticky='nw', padx=2)
+		wlib.drawImgWebLink(tbar, self.ch_img_path, self.ch_url).grid(row=0, column=3, sticky='nw', padx=2)
+		wlib.drawImgWebLink(tbar, self.yt_img_path, self.yt_url).grid(row=0, column=4, sticky='nw', padx=2)
 				
 		''' LEFT COLUMN CONTROLS START '''
 		''' -------------------------- '''
