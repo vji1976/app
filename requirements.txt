@@ -1,4 +1,4 @@
-Babel==2.8.0
+Babel==2.9.1
 lxml==4.5.0
 Pillow==7.1.1
 python-docx==0.8.10
